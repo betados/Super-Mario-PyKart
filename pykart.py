@@ -4,34 +4,34 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-verticies = (
-    (1, -1, -1),
-    (1, 1, -1),
-    (-1, 1, -1),
-    (-1, -1, -1),
-    (1, -1, 1),
-    (1, 1, 1),
-    (-1, -1, 1),
-    (-1, 1, 1)
-)
-
-edges = (
-    (0, 1),
-    (0, 3),
-    (0, 4),
-    (2, 1),
-    (2, 3),
-    (2, 7),
-    (6, 3),
-    (6, 4),
-    (6, 7),
-    (5, 1),
-    (5, 4),
-    (5, 7)
-)
-
 
 def Cube():
+    verticies = (
+        (1, -1, -1),
+        (1, 1, -1),
+        (-1, 1, -1),
+        (-1, -1, -1),
+        (1, -1, 1),
+        (1, 1, 1),
+        (-1, -1, 1),
+        (-1, 1, 1)
+    )
+
+    edges = (
+        (0, 1),
+        (0, 3),
+        (0, 4),
+        (2, 1),
+        (2, 3),
+        (2, 7),
+        (6, 3),
+        (6, 4),
+        (6, 7),
+        (5, 1),
+        (5, 4),
+        (5, 7)
+    )
+
     glBegin(GL_LINES)
     for edge in edges:
         for vertex in edge:
@@ -78,7 +78,7 @@ def main():
               0, # centerZ,
               0, # upX,
               0, # upY,
-              1 # upZ)
+              1 # upZ
               )
 
     loadScene('MapMushroomCup1.png')
@@ -90,14 +90,14 @@ def main():
                 quit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
+            if event.key in [pygame.K_LEFT, pygame.K_a]:
                 glTranslatef(-0.2, 0, 0)
-            if event.key == pygame.K_RIGHT:
+            if event.key in [pygame.K_RIGHT, pygame.K_d]:
                 glTranslatef(0.2, 0, 0)
 
-            if event.key == pygame.K_UP:
+            if event.key in [pygame.K_UP, pygame.K_w]:
                 glTranslatef(0, 0.2, 0)
-            if event.key == pygame.K_DOWN:
+            if event.key in [pygame.K_DOWN, pygame.K_s]:
                 glTranslatef(0, -0.2, 0)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
