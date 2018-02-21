@@ -66,7 +66,7 @@ def placeScene():
     glEnd()
 
 
-def draw(player, display):
+def draw(player, display, t):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     glViewport(0, 0, display[0], display[1])
@@ -76,7 +76,7 @@ def draw(player, display):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    gluLookAt(*player.getAll())
+    gluLookAt(*player.actualize(t))
     placeScene()
     Cube()
 
@@ -95,7 +95,7 @@ def main():
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     clock = pygame.time.Clock()
 
-    player = Player([0, 0, 1], [40, 40, -1])
+    player = Player([0, 0, 1])
     loadScene('MapMushroomCup1.png')
 
     while True:
@@ -106,25 +106,36 @@ def main():
 
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_LEFT, pygame.K_a]:
-                player.left()
+                player.turn('left')
             if event.key in [pygame.K_RIGHT, pygame.K_d]:
-                player.right()
+                player.turn('right')
 
             if event.key in [pygame.K_UP, pygame.K_w]:
-                player.gas()
+                player.gas(True)
             if event.key in [pygame.K_DOWN, pygame.K_s]:
                 player.reverse()
 
-            if event.key == pygame.K_u:
-                player.up()
+
+            # DEBUGGING KEYS
             if event.key == pygame.K_j:
+                player.left()
+            if event.key == pygame.K_l:
+                player.right()
+            if event.key == pygame.K_i:
+                player.up()
+            if event.key == pygame.K_k:
                 player.down()
 
+        if event.type == pygame.KEYUP:
+            if event.key in [pygame.K_UP, pygame.K_w]:
+                player.gas(False)
+            if event.key in [pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d]:
+                player.turn('none')
 
 
+        t = clock.tick(50)
+        draw(player, display, t)
 
-        draw(player, display)
-        clock.tick(60)
 
 if __name__ == "__main__":
     main()
