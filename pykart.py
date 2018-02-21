@@ -4,6 +4,8 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from player import Player
+
 
 def Cube():
     verticies = (
@@ -64,23 +66,36 @@ def placeScene():
     glEnd()
 
 
+def draw(player, display):
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    glViewport(0, 0, display[0], display[1])
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(45, float(display[0]) / float(display[1]), 0.1, 100.0)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+
+    gluLookAt(*player.getAll())
+    placeScene()
+    Cube()
+
+    glBegin(GL_TRIANGLES)
+    glVertex3f(0, 0, 0)
+    glVertex3f(1, 0, 0)
+    glVertex3f(0, 0, 1)
+    glEnd()
+
+    pygame.display.flip()
+
+
 def main():
     pygame.init()
     display = (800, 600)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
+    clock = pygame.time.Clock()
 
-    gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
-    gluLookAt(0, # eyeX,
-              0, # eyeY,
-              0.5, # eyeZ,
-              40, # centerX,
-              20, # centerY,
-              0, # centerZ,
-              0, # upX,
-              0, # upY,
-              1 # upZ
-              )
-
+    player = Player([0, 0, 1], [40, 40, -1])
     loadScene('MapMushroomCup1.png')
 
     while True:
@@ -91,29 +106,25 @@ def main():
 
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_LEFT, pygame.K_a]:
-                glTranslatef(-0.2, 0, 0)
+                player.left()
             if event.key in [pygame.K_RIGHT, pygame.K_d]:
-                glTranslatef(0.2, 0, 0)
+                player.right()
 
             if event.key in [pygame.K_UP, pygame.K_w]:
-                glTranslatef(0, 0.2, 0)
+                player.gas()
             if event.key in [pygame.K_DOWN, pygame.K_s]:
-                glTranslatef(0, -0.2, 0)
+                player.reverse()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 4:
-                glTranslatef(0, 0, 1.0)
-
-            if event.button == 5:
-                glTranslatef(0, 0, -1.0)
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        placeScene()
-        Cube()
-
-        pygame.display.flip()
-        pygame.time.wait(10)
+            if event.key == pygame.K_u:
+                player.up()
+            if event.key == pygame.K_j:
+                player.down()
 
 
-main()
+
+
+        draw(player, display)
+        clock.tick(60)
+
+if __name__ == "__main__":
+    main()
