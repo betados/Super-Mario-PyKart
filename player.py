@@ -6,7 +6,7 @@ class Player(object):
         self.eye = eye
         self.axis = [0, 0, 1]
         self.speed = 0.0
-        self.acel = 0.000009
+        self.acel = 0.0000005
         self.throttle = False
         self.turnD = {'right': 1, 'left': -1, 'none': 0}
         self.where = 0
@@ -46,7 +46,7 @@ class Player(object):
     def actualize(self, t):
         # acelerador
         self.speed += self.throttle * self.acel * t \
-            - 2*(self.speed * self.speed)  # rozamiento viscoso
+            - 4*(self.speed * self.speed)  # rozamiento viscoso
         # self.eye = [self.eye[i] + v * self.speed * t for i, v in enumerate(self.vector)] + [1]
         for i in [0, 1]:
             self.eye[i] += self.vector[i] * self.speed * t
@@ -54,7 +54,7 @@ class Player(object):
 
         # FIXME que no gire si no hay velocidad
         #  giro
-        self.lookat = [self.eye[i] + v * self.prof + self.normalVector[i] * self.where
+        self.lookat = [self.eye[i] + v * self.prof + self.normalVector[i] * self.where * 1.9
                        for i, v in enumerate(self.vector)] + [-1]
         self.setVector()
 

@@ -127,7 +127,7 @@ def main():
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     clock = pygame.time.Clock()
 
-    player = Player([0, 0, 1])
+    player = Player([0, 0, 0.15])
 
     while True:
         for event in pygame.event.get():
