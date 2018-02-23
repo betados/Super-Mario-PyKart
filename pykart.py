@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from pygame.locals import *
 
@@ -43,56 +45,78 @@ def Cube():
 
 def loadScene(bgImg):
     img = pygame.image.load(bgImg)
-    textureData = pygame.image.tostring(img, "RGB", True)
+    textureData = pygame.image.tostring(img, "RGBA", True)
     width = img.get_width()
     height = img.get_height()
     bgImgGL = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, bgImgGL)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
     glEnable(GL_TEXTURE_2D)
+
+# def loadScene3D(bgImg):
+#     img = pygame.image.load(bgImg)
+#     textureData = pygame.image.tostring(img, "RGB", True)
+#     width = img.get_width()
+#     height = img.get_height()
+#     bgImgGL = glGenTextures(1)
+#     glBindTexture(GL_TEXTURE_2D, bgImgGL)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+#     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, width, height, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData)
+#     glEnable(GL_TEXTURE_3D)
 
 
 def placeScene():
+    l = 5
     glBegin(GL_QUADS)
     glTexCoord2f(0, 0)
-    glVertex3f(-40, -40, 0)
+    glVertex3f(-l, -l, 0)
     glTexCoord2f(0, 1)
-    glVertex3f(-40, 40, 0)
+    glVertex3f(-l, l, 0)
     glTexCoord2f(1, 1)
-    glVertex3f(40, 40, 0)
+    glVertex3f(l, l, 0)
     glTexCoord2f(1, 0)
-    glVertex3f(40, -40, 0)
+    glVertex3f(l, -l, 0)
     glEnd()
 
-def placeSceneF():
-    glBegin(GL_QUADS)
-    glTexCoord2f(0, 0)
-    glVertex3f(-40, 40, 0)
-    glTexCoord2f(0, 1)
-    glVertex3f(-40, 40, 5)
-    glTexCoord2f(1, 1)
-    glVertex3f(-40, -40, 5)
-    glTexCoord2f(1, 0)
-    glVertex3f(-40, -40, 0)
-    glEnd()
+
+def placeSceneOctogono(radius, sides, h):
+    alpha = math.pi/(sides/2)
+
+    points = [(radius * math.cos(alpha * i), radius * math.sin(alpha * i)) for i in range(1, sides+1)]
+
+    for i in range(sides):
+        glBegin(GL_QUADS)
+        glTexCoord2f(0, 0)
+        glVertex3f(points[i][0], points[i][1], 0)
+        glTexCoord2f(0, 1)
+        glVertex3f(points[i][0], points[i][1], h)
+        glTexCoord2f(1, 1)
+        glVertex3f(points[i-1][0], points[i-1][1], h)
+        glTexCoord2f(1, 0)
+        glVertex3f(points[i-1][0], points[i-1][1], 0)
+        glEnd()
 
 
 def draw(player, display, t):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_BLEND)
 
     glViewport(0, 0, display[0], display[1])
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, float(display[0]) / float(display[1]), 0.1, 100.0)
+    gluPerspective(45, float(display[0]) / float(display[1]), 0.1, 300.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
     gluLookAt(*player.actualize(t))
-    loadScene('marioCircuit4.png')
+    loadScene('images/marioCircuit4.png')
     placeScene()
-    # loadScene('fondo.png')
-    # placeSceneF()
+    loadScene('images/fondo.png')
+    placeSceneOctogono(250, 8, 10)
+    loadScene('images/arboles.png')
+    placeSceneOctogono(50, 4, 2.5)
 
     pygame.display.flip()
 
@@ -104,7 +128,6 @@ def main():
     clock = pygame.time.Clock()
 
     player = Player([0, 0, 1])
-    # loadScene('marioKart4.png')
 
     while True:
         for event in pygame.event.get():
