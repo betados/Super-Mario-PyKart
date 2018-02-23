@@ -4,21 +4,24 @@ import math
 class Player(object):
     def __init__(self, eye):
         self.eye = eye
-        self.lookat = [40, 40, -1]
         self.axis = [0, 0, 1]
         self.speed = 0.0
-        self.acel = 0.000005
+        self.acel = 0.000009
         self.throttle = False
         self.turnD = {'right': 1, 'left': -1, 'none': 0}
         self.where = 0
+
+        self.vector = 1, 0
+        self.prof = 60
+        self.lookat = [v * self.prof + self.eye[i] for i, v in enumerate(self.vector)] + [-1]
 
     def gas(self, throttle):
         self.throttle = throttle
 
     def reverse(self):
         for i in [0, 1]:
-            self.eye[i] -= self.getVector()[i]
-            self.lookat[i] -= self.getVector()[i]
+            self.eye[i] -= self.vector[i]
+            self.lookat[i] -= self.vector[i]
 
     def turn(self, where):
         self.where = self.turnD[where]
@@ -26,13 +29,13 @@ class Player(object):
     # DEBUGGING FUNCTIONS
     def right(self):
         for i in [0, 1]:
-            self.eye[i] += self.getNormalVector()[i]
-            self.lookat[i] += self.getNormalVector()[i]
+            self.eye[i] += self.normalVector[i]
+            self.lookat[i] += self.normalVector[i]
 
     def left(self):
         for i in [0, 1]:
-            self.eye[i] -= self.getNormalVector()[i]
-            self.lookat[i] -= self.getNormalVector()[i]
+            self.eye[i] -= self.normalVector[i]
+            self.lookat[i] -= self.normalVector[i]
 
     def up(self):
         self.eye[2] += 0.01
@@ -43,27 +46,31 @@ class Player(object):
     def actualize(self, t):
         # acelerador
         self.speed += self.throttle * self.acel * t \
-            - 1*(self.speed * self.speed)  # rozamiento viscoso
+            - 2*(self.speed * self.speed)  # rozamiento viscoso
+        # self.eye = [self.eye[i] + v * self.speed * t for i, v in enumerate(self.vector)] + [1]
         for i in [0, 1]:
-            self.eye[i] += self.getVector()[i] * self.speed * t
-            # self.lookat[i] += self.getVector()[i] * 40
+            self.eye[i] += self.vector[i] * self.speed * t
+        self.lookat = [v * self.prof + self.eye[i] for i, v in enumerate(self.vector)] + [-1]
 
+        # FIXME que no gire si no hay velocidad
         #  giro
-        for i in [0, 1]:
-            self.lookat[i] = self.eye[i] + self.getVector()[i] * 40 + self.where * self.getNormalVector()[i] * 0.5
+        self.lookat = [self.eye[i] + v * self.prof + self.normalVector[i] * self.where
+                       for i, v in enumerate(self.vector)] + [-1]
+        self.setVector()
 
         return self.eye + self.lookat + self.axis
 
-    def getVector(self):
-        v = self.getUnitVector(self.eye, self.lookat)
-        return v[0], v[1]
+    def setVector(self):
+        self.vector = self.getUnitVector(self.eye, self.lookat)
 
-    def getNormalVector(self):
+    @property
+    def normalVector(self):
         """ 90 grados en sentido horario """
-        v = self.getVector()
+        v = self.vector
         vn = v[1], -v[0]
         return vn[0], vn[1]
 
+    # TODO make this static
     def getUnitVector(self, i, j):
         vector = [j[0] - i[0], j[1] - i[1]]
         modulo = math.sqrt(math.pow(vector[0], 2) + math.pow(vector[1], 2))

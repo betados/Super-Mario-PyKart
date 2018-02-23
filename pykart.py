@@ -43,7 +43,7 @@ def Cube():
 
 def loadScene(bgImg):
     img = pygame.image.load(bgImg)
-    textureData = pygame.image.tostring(img, "RGB", 1)
+    textureData = pygame.image.tostring(img, "RGB", True)
     width = img.get_width()
     height = img.get_height()
     bgImgGL = glGenTextures(1)
@@ -65,6 +65,18 @@ def placeScene():
     glVertex3f(40, -40, 0)
     glEnd()
 
+def placeSceneF():
+    glBegin(GL_QUADS)
+    glTexCoord2f(0, 0)
+    glVertex3f(-40, 40, 0)
+    glTexCoord2f(0, 1)
+    glVertex3f(-40, 40, 5)
+    glTexCoord2f(1, 1)
+    glVertex3f(-40, -40, 5)
+    glTexCoord2f(1, 0)
+    glVertex3f(-40, -40, 0)
+    glEnd()
+
 
 def draw(player, display, t):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -77,26 +89,22 @@ def draw(player, display, t):
     glLoadIdentity()
 
     gluLookAt(*player.actualize(t))
+    loadScene('marioCircuit4.png')
     placeScene()
-    Cube()
-
-    glBegin(GL_TRIANGLES)
-    glVertex3f(0, 0, 0)
-    glVertex3f(1, 0, 0)
-    glVertex3f(0, 0, 1)
-    glEnd()
+    # loadScene('fondo.png')
+    # placeSceneF()
 
     pygame.display.flip()
 
 
 def main():
     pygame.init()
-    display = (800, 600)
+    display = (1200, 800)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     clock = pygame.time.Clock()
 
     player = Player([0, 0, 1])
-    loadScene('MapMushroomCup1.png')
+    # loadScene('marioKart4.png')
 
     while True:
         for event in pygame.event.get():
@@ -133,7 +141,7 @@ def main():
                 player.turn('none')
 
 
-        t = clock.tick(50)
+        t = clock.tick(100)
         draw(player, display, t)
 
 
