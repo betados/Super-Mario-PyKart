@@ -42,7 +42,7 @@ from scene import Scene
 #     glEnd()
 
 
-def draw(player, display, scene, t):
+def draw(player, display, scene, t, screen):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glEnable(GL_BLEND)
@@ -54,8 +54,9 @@ def draw(player, display, scene, t):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    gluLookAt(*player.actualize(t))
+    gluLookAt(*player.actualize(t, screen))
     scene.draw()
+    player.draw()
 
     pygame.display.flip()
 
@@ -63,7 +64,8 @@ def draw(player, display, scene, t):
 def main():
     pygame.init()
     display = (1200, 800)
-    pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
+    screen = pygame.display.set_mode(display, DOUBLEBUF | OPENGL | pygame.OPENGLBLIT)
+    # screen = pygame.display.set_mode(display,  pygame.OPENGLBLIT)
     clock = pygame.time.Clock()
     scene = Scene()
 
@@ -75,37 +77,41 @@ def main():
                 pygame.quit()
                 quit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key in [pygame.K_LEFT, pygame.K_a]:
-                player.turn('left')
-            if event.key in [pygame.K_RIGHT, pygame.K_d]:
-                player.turn('right')
+            if event.type == pygame.KEYDOWN:
+                if event.key in [pygame.K_LEFT, pygame.K_a]:
+                    player.turn ='left'
+                if event.key in [pygame.K_RIGHT, pygame.K_d]:
+                    player.turn = 'right'
 
-            if event.key in [pygame.K_UP, pygame.K_w]:
-                player.gas(True)
-            if event.key in [pygame.K_DOWN, pygame.K_s]:
-                player.reverse()
+                if event.key in [pygame.K_UP, pygame.K_w]:
+                    player.gas(True)
+                if event.key in [pygame.K_DOWN, pygame.K_s]:
+                    player.reverse()
 
-
-            # DEBUGGING KEYS
-            if event.key == pygame.K_j:
-                player.left()
-            if event.key == pygame.K_l:
-                player.right()
-            if event.key == pygame.K_i:
-                player.up()
-            if event.key == pygame.K_k:
-                player.down()
-
-        if event.type == pygame.KEYUP:
-            if event.key in [pygame.K_UP, pygame.K_w]:
-                player.gas(False)
-            if event.key in [pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d]:
-                player.turn('none')
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
 
 
-        t = clock.tick(100)
-        draw(player, display, scene, t)
+                # DEBUGGING KEYS
+                if event.key == pygame.K_j:
+                    player.left()
+                if event.key == pygame.K_l:
+                    player.right()
+                if event.key == pygame.K_i:
+                    player.up()
+                if event.key == pygame.K_k:
+                    player.down()
+
+            if event.type == pygame.KEYUP:
+                if event.key in [pygame.K_UP, pygame.K_w]:
+                    player.gas(False)
+                if event.key in [pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d]:
+                    player.turn ='none'
+
+
+        t = clock.tick(50)
+        draw(player, display, scene, t, screen)
 
 
 if __name__ == "__main__":
