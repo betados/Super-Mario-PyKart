@@ -79,7 +79,7 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_LEFT, pygame.K_a]:
-                    player.turn ='left'
+                    player.turn = 'left'
                 if event.key in [pygame.K_RIGHT, pygame.K_d]:
                     player.turn = 'right'
 
@@ -91,7 +91,6 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     quit()
-
 
                 # DEBUGGING KEYS
                 if event.key == pygame.K_j:
@@ -107,8 +106,7 @@ def main():
                 if event.key in [pygame.K_UP, pygame.K_w]:
                     player.gas(False)
                 if event.key in [pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d]:
-                    player.turn ='none'
-
+                    player.turn = 'none'
 
         t = clock.tick(50)
         draw(player, display, scene, t, screen)
