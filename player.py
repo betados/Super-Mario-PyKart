@@ -50,7 +50,6 @@ class Player(object):
         Drawing.loadScene(self.texture[self.turn])
         height = 0.05
         a = height * 230
-        print(a)
         p = self.pos / 3 + self.eye
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
@@ -64,14 +63,14 @@ class Player(object):
         glEnd()
 
     def actualize(self, t):
-        # acelerador
+        # accelerator
         self.speed += self.throttle * self.acel * t - 4 * self.speed ** 2  # rozamiento viscoso
         self.eye += self.pos * self.speed * t
         self.lookat = self.pos * self.prof + self.eye
 
-        # FIXME que no gire si no hay velocidad
-        #  giro
-        self.lookat = self.eye + self.pos * self.prof + self.pos.normal() * self.turnD[self.turn] * 1.9
+        # turn
+        self.lookat = self.eye + self.pos * self.prof + self.pos.normal() * self.turnD[self.turn] * self.speed * 1560
+        print(self.speed)
         self.pos = (self.lookat - self.eye).unit()
 
         return self.eye.get_comps() + (self.eye_z,) + self.lookat.get_comps() + (self.lookat_z,) + tuple(self.axis)
