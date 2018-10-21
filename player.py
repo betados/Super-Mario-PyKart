@@ -8,11 +8,14 @@ class Player(object):
     def __init__(self, eye):
         self.eye = Vector(*eye[:2])
         self.eye_z = eye[2]
-        self.axis = [0, 0, 1]
+        self.axis = (0, 0, 1)
         self.speed = 0.0
-        self.acel = 0.0000005
+        self.accel = 0.0000005
         self.throttle = False
-        self.turnD = {'right': -1, 'left': 1, 'none': 0}
+        self.turnD = {'right': -1,
+                      'left': 1,
+                      'none': 0,
+                      }
         self.texture = {'right': Drawing.getTexture('images/yoshiRight.png'),
                         'left': Drawing.getTexture('images/yoshiLeft.png'),
                         'none': Drawing.getTexture('images/yoshiStraight.png'),
@@ -64,13 +67,13 @@ class Player(object):
 
     def actualize(self, t):
         # accelerator
-        self.speed += self.throttle * self.acel * t - 4 * self.speed ** 2  # rozamiento viscoso
+        self.speed += self.throttle * self.accel * t - \
+                      4 * self.speed ** 2  # viscous friction
         self.eye += self.pos * self.speed * t
         self.lookat = self.pos * self.prof + self.eye
 
         # turn
         self.lookat = self.eye + self.pos * self.prof + self.pos.normal() * self.turnD[self.turn] * self.speed * 1560
-        print(self.speed)
         self.pos = (self.lookat - self.eye).unit()
 
-        return self.eye.get_comps() + (self.eye_z,) + self.lookat.get_comps() + (self.lookat_z,) + tuple(self.axis)
+        return self.eye.get_comps() + (self.eye_z,) + self.lookat.get_comps() + (self.lookat_z,) + self.axis
