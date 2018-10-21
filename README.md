@@ -1,7 +1,12 @@
 # Super-Mario-PyKart
 
-Control it with the kayboard arrows or with the wasd keys.
+Control it with the keyboard arrows or with the WASD keys.
 
-requirements:
-  * pip install pygame
-  * pip install pyopengl
+## Requirements:
+  * pygame
+  * pyopengl
+  * vector-2d
+  
+  ```bash
+ pip install -r requirements.txt
+  ```
