@@ -12,10 +12,11 @@ class Player(object):
         self.speed = 0.0
         self.acel = 0.0000005
         self.throttle = False
-        self.turnD = {'right': 1, 'left': -1, 'none': 0}
+        self.turnD = {'right': -1, 'left': 1, 'none': 0}
         self.texture = {'right': Drawing.getTexture('images/yoshiRight.png'),
                         'left': Drawing.getTexture('images/yoshiLeft.png'),
-                        'none': Drawing.getTexture('images/yoshiStraight.png')}
+                        'none': Drawing.getTexture('images/yoshiStraight.png'),
+                        }
         self.turn = 'none'
 
         self.pos = Vector(1, 0)
@@ -64,7 +65,7 @@ class Player(object):
         glVertex3f(*(p + self.pos.normal() / a), 0)
         glEnd()
 
-    def actualize(self, t, screen):
+    def actualize(self, t):
         # acelerador
         self.speed += self.throttle * self.acel * t - 4 * self.speed ** 2  # rozamiento viscoso
         self.eye += self.pos * self.speed * t

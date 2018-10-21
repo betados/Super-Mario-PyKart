@@ -42,7 +42,7 @@ from scene import Scene
 #     glEnd()
 
 
-def draw(player, display, scene, t, screen):
+def draw(player, display, scene, t):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glEnable(GL_BLEND)
@@ -54,7 +54,7 @@ def draw(player, display, scene, t, screen):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-    gluLookAt(*player.actualize(t, screen))
+    gluLookAt(*player.actualize(t))
     scene.draw()
     player.draw()
 
@@ -78,11 +78,10 @@ def main():
                 quit()
 
             if event.type == pygame.KEYDOWN:
-                # FIXME inverted temporarily, fix inside
                 if event.key in [pygame.K_LEFT, pygame.K_a]:
-                    player.turn = 'right'
-                if event.key in [pygame.K_RIGHT, pygame.K_d]:
                     player.turn = 'left'
+                if event.key in [pygame.K_RIGHT, pygame.K_d]:
+                    player.turn = 'right'
 
                 if event.key in [pygame.K_UP, pygame.K_w]:
                     player.gas(True)
@@ -110,7 +109,7 @@ def main():
                     player.turn = 'none'
 
         t = clock.tick(50)
-        draw(player, display, scene, t, screen)
+        draw(player, display, scene, t)
 
 
 if __name__ == "__main__":
