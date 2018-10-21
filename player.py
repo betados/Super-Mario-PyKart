@@ -33,20 +33,18 @@ class Player(object):
 
     # DEBUGGING FUNCTIONS
     def right(self):
-        for i in [0, 1]:
-            self.eye[i] += self.normalVector[i]
-            self.lookat[i] += self.normalVector[i]
+        self.eye += self.pos.normal()
+        self.lookat += self.pos.normal()
 
     def left(self):
-        for i in [0, 1]:
-            self.eye[i] -= self.normalVector[i]
-            self.lookat[i] -= self.normalVector[i]
+        self.eye -= self.pos.normal()
+        self.lookat -= self.pos.normal()
 
     def up(self):
-        self.eye[2] += 0.01
+        self.eye_z += 0.01
 
     def down(self):
-        self.eye[2] -= 0.01
+        self.eye_z -= 0.01
 
     def draw(self):
         Drawing.loadScene(self.texture[self.turn])
@@ -74,25 +72,6 @@ class Player(object):
         # FIXME que no gire si no hay velocidad
         #  giro
         self.lookat = self.eye + self.pos * self.prof + self.pos.normal() * self.turnD[self.turn] * 1.9
-        self.setPos()
+        self.pos = (self.lookat - self.eye).unit()
 
         return self.eye.get_comps() + (self.eye_z,) + self.lookat.get_comps() + (self.lookat_z,) + tuple(self.axis)
-
-    def setPos(self):
-        self.pos = (self.lookat - self.eye).unit()
-    #
-    # @property
-    # def normalVector(self):
-    #     """ 90 grados en sentido horario """
-    #     v = self.pos
-    #     vn = v[1], -v[0]
-    #     return vn[0], vn[1]
-    #
-    # @staticmethod
-    # def getUnitVector(i, j):
-    #     vector = [j[0] - i[0], j[1] - i[1]]
-    #     modulo = math.sqrt(math.pow(vector[0], 2) + math.pow(vector[1], 2))
-    #     if modulo != 0:
-    #         return [vector[0] / modulo, vector[1] / modulo]
-    #     else:
-    #         return [0, 0]
