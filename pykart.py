@@ -78,10 +78,11 @@ def main():
                 quit()
 
             if event.type == pygame.KEYDOWN:
+                # FIXME inverted temporarily, fix inside
                 if event.key in [pygame.K_LEFT, pygame.K_a]:
-                    player.turn = 'left'
-                if event.key in [pygame.K_RIGHT, pygame.K_d]:
                     player.turn = 'right'
+                if event.key in [pygame.K_RIGHT, pygame.K_d]:
+                    player.turn = 'left'
 
                 if event.key in [pygame.K_UP, pygame.K_w]:
                     player.gas(True)

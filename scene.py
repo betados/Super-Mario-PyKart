@@ -21,7 +21,6 @@ class Scene(object):
         Drawing.loadScene(self.trees)
         self.placeSceneArround(18, 5, 0.8)
 
-
     def placeScene(self):
         side = 5
         glBegin(GL_QUADS)
@@ -50,6 +49,5 @@ class Scene(object):
             glTexCoord2f(1, 0)
             glVertex3f(points[i - 1][0], points[i - 1][1], 0)
             glEnd()
-
 
 # ALSA lib pcm.c:7963:(snd_pcm_recover) underrun occurred
